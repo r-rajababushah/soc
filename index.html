@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Report: Science of Creative Intelligence</title>
+    <!-- Chosen Palette: Warm Zen (BG: amber-50, Text: stone-800, Cards: white, Accent: teal-600/700) -->
+    <!-- Application Structure Plan: Designed a 2-section SPA: 1. 'What is SCI?' (Introduction), 2. 'Explore the Principles' (Accordion List). The chart section was removed per user request. The interaction model was changed from a "one-at-a-time" display to a full accordion. This structure allows the user to click to open any principle's description, and it will remain open as they scroll and open others, fulfilling the request to "view all descriptions without closing any." -->
+    <!-- Visualization & Content Choices: Report Info: 16 conceptual principles. -> Goal: Inform (Drill-down). -> Viz: HTML/Tailwind Accordion List. -> Interaction: Click header -> JS expands/collapses the content panel for that item. -> Justification: This directly meets the user's request to see multiple descriptions at once, replacing the previous single-display model. -> Library/Method: Vanilla JS + HTML/CSS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .accordion-header .icon {
+            transform: rotate(0deg);
+            transition: transform 0.3s ease-in-out;
+        }
+        .accordion-item.active .accordion-header .icon {
+            transform: rotate(45deg);
+        }
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.3s ease-in-out;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .accordion-item.active .accordion-body {
+            /* max-height is set by JS to fit content */
+            padding-top: 1.5rem; /* p-6 */
+            padding-bottom: 1.5rem; /* p-6 */
+        }
+    </style>
+</head>
+<body class="bg-amber-50 text-stone-800 leading-relaxed">
+
+    <!-- Header -->
+    <header class="text-center p-8 md:p-12 bg-white shadow-md">
+        <h1 class="text-4xl md:text-5xl font-bold text-teal-800 mb-4">Exploring the Science of Creative Intelligence</h1>
+        <p class="text-lg md:text-xl text-stone-700 max-w-3xl mx-auto">
+            An interactive dashboard to explore the 16 principles of SCI, based on the teachings of Maharishi Mahesh Yogi.
+        </p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <!-- Section 1: What is SCI? -->
+        <section id="about" class="mb-12 p-6 md:p-8 bg-white rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold text-teal-700 mb-4">What is the Science of Creative Intelligence?</h2>
+            <p class="text-lg text-stone-700 mb-4">
+                This application explores the 16 principles of the Science of Creative Intelligence (SCI). SCI provides a complete vision of the field that is fundamental to our existence: the Unified Field of pure consciousness. This field is home to the laws that govern all natural phenomena and all fields of knowledge.
+            </p>
+            <p class="text-lg text-stone-700">
+                The aim of this knowledge is to complete education by adding the "subjective" aspect (knowledge of the knower) to the "objective" aspect (knowledge of the world). By understanding these principles, we can develop our full potential and live a life of fulfillment and harmony.
+            </p>
+        </section>
+
+        <!-- Section 2: Explore the 16 Principles -->
+        <section id="principles-explorer" class="mb-12">
+            <h2 class="text-3xl font-bold text-teal-700 mb-4 text-center">Explore the 16 Principles</h2>
+            <p class="text-lg text-stone-700 max-w-2xl mx-auto text-center mb-8">
+                Click any principle's title below to expand it and read the full explanation. You can open as many as you like.
+            </p>
+
+            <!-- The Accordion List -->
+            <div id="principlesAccordion" class="space-y-4">
+                <!-- Principles will be injected here by JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center p-6 bg-white shadow-inner mt-12">
+        <p class="text-stone-600">An interactive learning tool based on the principles of SCI.</p>
+    </footer>
+
+    <script>
+        // Data Store for all 16 principles
+        // Sourced from the user's provided file
+        const principlesData = {
+            'p1': {
+                title: "1. The Nature of life is to grow",
+                text: "This principle says that the main, natural drive of all life is to grow. This isn't just physical growth, like a seed becoming a tree, but a living process of moving toward fuller expression, new abilities, and more happiness. For people, this is the drive to become our best selves—moving from limited feelings toward endless awareness and reaching our full, hidden potential. Life naturally avoids getting 'stuck' and always tries to show more of its built-in creativity and smarts."
+            },
+            'p2': {
+                title: "2. Order is present everywhere",
+                text: "This principle says that the universe isn't just a mix of random, messy events. Instead, it is guided by a deep, built-in, and orderly intelligence that is everywhere. From the exact paths of planets in space to the tiny dance of unseen particles, everything that happens is a sign of a basic Natural Law. This universal teamwork shows that a powerful order is underneath all of creation. It makes sure that all the different parts of the universe work together as one peaceful whole."
+            },
+            'p3': {
+                title: "3. Life is found in layers",
+                text: "This principle explains that life is built in layers. It ranges from the solid, physical things we can see and touch to the finest, unseen, and hidden levels. Like an onion, we can 'peel back' these layers of life. We can go from the everyday world of objects and our bodies, to the softer areas of our thoughts and feelings, and finally to the source of everything: the quiet, limitless field of pure awareness. Each deeper layer is more basic and stronger, and it holds up the layer above it."
+            },
+            'p4': {
+                title: "4. Outer depends on Inner",
+                text: "This principle shows that the inner world is more important than the outer world. It says that the outer world we see (our experiences, successes, health, and surroundings) is a direct copy and expression of our hidden, inner world (our state of awareness). The quality of our inner life—how much peace, order, and creative smarts we have woken up inside—is what decides the quality and success of our outer life. To change the 'fruit' (the outer), you must first feed the 'root' (the inner)."
+            },
+            'p5': {
+                title: "5. Seek the highest first",
+                text: "This principle is a practical guideline telling us to put the most basic, powerful, and complete level of life first. The 'highest' means the final, unseen source of all creative smarts—the Unified Field of pure awareness. By trying to wake up and settle our awareness in this basic state first (like through meditation), we get a strong base. From this base, all our other goals—like gaining knowledge, wealth, or good relationships—can be handled in the best way, with the most support from nature and with the most happiness."
+            },
+            'p6': {
+                title: "6. Rest and activity are the steps of progress",
+                text: "This principle shows that to grow in a lasting way, we need a back-and-forth process of rest and action. Busy action is needed to make things, reach goals, and use energy, but it must be balanced by deep rest. This rest is not just sleep. It's a state of deep inner quiet where the body is settled and the mind is aware. During this deep rest, the nervous system cleans itself, melts away stress, and 'soaks in' experiences. This makes it a vital step for steady, forward growth and stops us from getting worn out."
+            },
+            'p7': {
+                title: "7. Enjoy greater efficiency and accomplish more",
+                text: "This principle connects your inner happiness to doing your best. When your mind is calm, orderly, and in tune with the flow of creative smarts, there is less struggle. Action becomes easier and more fun. This 'flow state' is very efficient for the brain. It lets you do the right thing naturally, which gets the best results with the least amount of effort. So, growing your inner happiness and inner order directly makes you more successful and able to get more done."
+            },
+            'p8': {
+                title: "8. Every action has a reaction",
+                text: "This is a way of saying Karma is an unbreakable law, and it's about more than just physics. It says that every action—whether it's something you do, something you say, or even just a small thought—makes a mark and creates a future result that comes back to you. This ongoing, circular process of cause and effect controls our experiences. It shows we are responsible for our lives and have the power to change our future by choosing good, positive actions."
+            },
+            'p9': {
+                title: "9. Purification leads to progress",
+                text: "This principle says that growth is a cleaning process. We make progress by steadily getting rid of 'impurities' that block us from showing our full potential. These 'impurities' can be bad things in the body, deep stresses in the nervous system, or mental fogginess and lack of knowledge. As these blocks are cleaned out, our inner creative smarts can shine more clearly. This leads to better health, a clearer mind, and natural growth."
+            },
+            'p10': {
+                title: "10. The field of all possibilities is the source of all solutions",
+                text: "This principle points to the hidden, deep field of pure awareness as the basic storehouse of all creative power. It is a quiet, limitless ocean of 'all possibilities' where everything we see comes from. When a person's mind reaches this field, it can tap into the source of all new ideas and answers. Problems that seem impossible to solve from the everyday level of thinking can find complete and creative answers from this basic level of smarts."
+            },
+            'p11': {
+                title: "11. Thought leads to action, action leads to achievement, and achievement leads to fulfilment",
+                text: "This principle explains the full steps of how things are created. The whole cycle starts with a tiny spark of creative smarts, which comes out as a 'thought.' This inner thought, when given focus and energy, turns into an 'action' in the outer world. This action, when done correctly, ends in a real 'achievement.' Finishing this cycle, from a spark of an idea to a real thing, brings a wave of 'happiness.' This feeds the person who had the thought and inspires them to create something new again."
+            },
+            'p12': {
+                title: "12. Knowledge is gained from inside and outside",
+                text: "This principle defines complete knowledge as a mix of two different paths. 'Outside' knowledge is about facts. We learn it through our senses and our brain (like science or reading books). 'Inside' knowledge is personal and comes from feelings. We get it from the direct experience of our own awareness. Real wisdom needs both. Without inner experience, outer facts feel empty. Without using it in the outer world, inner experience isn't complete."
+            },
+            'p13': {
+                title: "13. Knowledge is structured in consciousness",
+                text: "This principle says that awareness is not just a 'box' that holds knowledge. It is the very 'scaffolding' and structure that holds knowledge together. Your ability to understand, connect, and use knowledge depends on the quality and orderliness of your own awareness. A bigger or 'brighter' state of awareness has a more orderly and connected structure. This lets you see deeper truths and links that a more limited or messy state of awareness just can't see."
+            },
+            'p14': {
+                title: "14. Harmony exists in diversity",
+                text: "This principle describes the universe as a perfect mix of endless variety (all the different things) and a deep-down oneness (all the peace). It's like an orchestra: lots of different instruments (variety) each play their own special part, but they all follow the same piece of music (peace). This creates one clear and beautiful piece of music. This deep-down teamwork, which comes from the Unified Field, lets all the millions of different things in creation live and work together in a helpful, supportive, and connected way."
+            },
+            'p15': {
+                title: "15. The whole is contained in every part",
+                text: "This principle shares an idea that life is like a hologram (where every piece shows the whole picture). It says that the creative smarts and basic nature of the entire big universe (the 'whole') is built-in and reflected in every tiny piece (the 'part'). Just like the DNA in one cell holds the plan for the whole body, every single part of creation—from one atom to a person—holds the full power and all the Natural Laws of the limitless, everywhere-present Unified Field."
+            },
+            'p16': {
+                title: "16. The whole is greater than the sum of the parts",
+                text: "This principle defines 'synergy,' which means 'working together.' When single pieces are brought together and connected into an orderly, working 'whole,' something new and amazing appears. This new thing is totally different and much greater than what the separate pieces could ever make by themselves. A pile of 'parts' (like organs, bones, and skin) is not a living person. The 'whole' (the living person) has special qualities like life, awareness, and creativity. These qualities come from the deep, organizing intelligence that brings all those parts together as one."
+            }
+        };
+
+        // Wait for the DOM to be fully loaded
+        window.addEventListener('DOMContentLoaded', () => {
+            
+            // Get DOM Element
+            const principlesAccordion = document.getElementById('principlesAccordion');
+
+            // --- 1. Initialize the Principles Accordion ---
+            function createAccordion() {
+                principlesAccordion.innerHTML = '';
+                for (const [id, data] of Object.entries(principlesData)) {
+                    
+                    const item = document.createElement('div');
+                    item.className = "accordion-item bg-white rounded-xl shadow-lg overflow-hidden";
+
+                    const header = document.createElement('div');
+                    header.className = "accordion-header p-4 md:p-6 cursor-pointer flex justify-between items-center bg-teal-600 text-white hover:bg-teal-700 transition-colors duration-200";
+                    header.innerHTML = `
+                        <h3 classs="text-lg md:text-xl font-semibold">${data.title}</h3>
+                        <span class="icon text-2xl font-bold transition-transform duration-300">&plus;</span>
+                    `;
+
+                    const body = document.createElement('div');
+                    body.className = "accordion-body";
+                    body.innerHTML = `<p class="px-4 md:px-6 text-lg text-stone-700 leading-relaxed">${data.text}</p>`;
+
+                    item.appendChild(header);
+                    item.appendChild(body);
+                    principlesAccordion.appendChild(item);
+                }
+            }
+
+            // --- 2. Add Event Listeners ---
+            
+            principlesAccordion.addEventListener('click', (e) => {
+                const header = e.target.closest('.accordion-header');
+                if (!header) return;
+
+                const item = header.parentElement;
+                const body = header.nextElementSibling;
+                const icon = header.querySelector('.icon');
+
+                item.classList.toggle('active');
+
+                if (item.classList.contains('active')) {
+                    // Set max-height to the content's full height
+                    body.style.maxHeight = body.scrollHeight + 'px';
+                    icon.innerHTML = '&minus;';
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    body.style.maxHeight = '0';
+                    icon.innerHTML = '&plus;';
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // --- 3. Initial Page Load ---
+            createAccordion();
+        });
+    </script>
+</body>
+</html>
+
