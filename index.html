@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
     <title>Interactive Report: Science of Creative Intelligence</title>
     <!-- Chosen Palette: Warm Zen (BG: amber-50, Text: stone-800, Cards: white, Accent: teal-600/700) -->
     <!-- Application Structure Plan: Designed a 2-section SPA: 1. 'What is SCI?' (Introduction), 2. 'Explore the Principles' (Accordion List). The chart section was removed per user request. The interaction model was changed from a "one-at-a-time" display to a full accordion. This structure allows the user to click to open any principle's description, and it will remain open as they scroll and open others, fulfilling the request to "view all descriptions without closing any." -->
@@ -24,14 +24,8 @@
         .accordion-body {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.5s ease-in-out, padding 0.3s ease-in-out;
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-        .accordion-item.active .accordion-body {
-            /* max-height is set by JS to fit content */
-            padding-top: 1.5rem; /* p-6 */
-            padding-bottom: 1.5rem; /* p-6 */
+            transition: max-height 0.5s ease-in-out;
+            /* Padding has been removed from here to fix the overflow bug */
         }
     </style>
 </head>
@@ -171,7 +165,8 @@
 
                     const body = document.createElement('div');
                     body.className = "accordion-body";
-                    body.innerHTML = `<p class="px-4 md:px-6 text-lg text-stone-700 leading-relaxed">${data.text}</p>`;
+                    // **FIX**: Padding is now on the inner <p> tag to ensure scrollHeight is calculated correctly.
+                    body.innerHTML = `<p class="p-6 md:px-8 text-lg text-stone-700 leading-relaxed">${data.text}</p>`;
 
                     item.appendChild(header);
                     item.appendChild(body);
@@ -192,7 +187,7 @@
                 item.classList.toggle('active');
 
                 if (item.classList.contains('active')) {
-                    // Set max-height to the content's full height
+                    // Set max-height to the content's full scroll height
                     body.style.maxHeight = body.scrollHeight + 'px';
                     icon.innerHTML = '&minus;';
                     icon.style.transform = 'rotate(180deg)';
